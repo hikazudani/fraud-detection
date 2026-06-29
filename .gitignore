@@ -4,3 +4,6 @@ __pycache__/
 .ipynb_checkpoints/
 .DS_Store
 .env
+data/modelagem
+data/processado
+proposta_final_fraude_transacoes_financeiras.pdf
