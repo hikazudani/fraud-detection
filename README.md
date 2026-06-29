@@ -2,7 +2,7 @@
 
 Projeto acadêmico da disciplina **Projetos de IA**, que avalia modelos de machine learning para detecção de fraude em transações financeiras sintéticas, considerando desempenho na classe minoritária, robustez ao desbalanceamento extremo, custo do erro e tempo de inferência.
 
-Dataset: [PaySim Synthetic Financial Dataset](https://www.kaggle.com/datasets/ealaxi/paysim1) (Kaggle, CC BY-SA 4.0) — ~6,3 milhões de transações, ~0,13% de fraude.
+Dataset: [PaySim Synthetic Financial Dataset](https://www.kaggle.com/datasets/ealaxi/paysim1) (Kaggle, CC BY-SA 4.0): ~6,3 milhões de transações, ~0,13% de fraude.
 
 Proposta completa e resultados detalhados: [`proposta-projeto.md`](./proposta-projeto.md)
 
