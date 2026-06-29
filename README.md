@@ -46,9 +46,9 @@ fraud-detection/
 
 Os notebooks devem ser executados nesta ordem:
 
-1. **`eda_fraud_detection_refatorado.ipynb`** — baixa o dataset via `kagglehub`, faz a análise exploratória (distribuição de classes, tipos de transação, valores, inconsistências de saldo).
-2. **`preprocessamento_fraud_detection.ipynb`** — remove colunas de alto risco de leakage/cardinalidade (`isFlaggedFraud`, `nameOrig`, `nameDest`), cria features (`log_amount`, variáveis de erro de saldo, features temporais), faz o split temporal por `step` e salva os conjuntos em `data/processado/`.
-3. **`modelagem_fraud_detection_refatorado_limpo.ipynb`** — carrega os dados processados, treina baselines e modelos (Regressão Logística, Random Forest, XGBoost, com e sem SMOTE), avalia métricas/custo/tempo de inferência, testa robustez por imbalance ratio e salva os resultados e o modelo final (`melhor_modelo.joblib`) em `data/modelagem/`.
+1. **`eda_fraud_detection_refatorado.ipynb`:**: Baixa o dataset via `kagglehub`, faz a análise exploratória (distribuição de classes, tipos de transação, valores, inconsistências de saldo).
+2. **`preprocessamento_fraud_detection.ipynb`:**: Remove colunas de alto risco de leakage/cardinalidade (`isFlaggedFraud`, `nameOrig`, `nameDest`), cria features (`log_amount`, variáveis de erro de saldo, features temporais), faz o split temporal por `step` e salva os conjuntos em `data/processado/`.
+3. **`modelagem_fraud_detection_refatorado_limpo.ipynb`:** Carrega os dados processados, treina baselines e modelos (Regressão Logística, Random Forest, XGBoost, com e sem SMOTE), avalia métricas/custo/tempo de inferência, testa robustez por imbalance ratio e salva os resultados e o modelo final (`melhor_modelo.joblib`) em `data/modelagem/`.
 
 ## Como rodar
 
