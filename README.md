@@ -63,7 +63,7 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-Configure suas credenciais do Kaggle (necessário para o `kagglehub` baixar o dataset — veja [docs do kagglehub](https://github.com/Kagglehub/kagglehub) sobre `kaggle.json`).
+Configure suas credenciais do Kaggle (necessário para o `kagglehub` baixar o dataset, veja [docs do kagglehub](https://github.com/Kagglehub/kagglehub) sobre `kaggle.json`).
 
 Depois, execute os notebooks na ordem listada acima (Jupyter, VS Code ou Colab).
 
