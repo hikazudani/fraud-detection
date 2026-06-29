@@ -35,8 +35,8 @@ fraud-detection/
 │   ├── preprocessamento_fraud_detection.ipynb # Limpeza, features, split temporal
 │   └── modelagem_fraud_detection_refatorado_limpo.ipynb # Baselines, modelos, avaliação
 ├── data/
-│   ├── processado/                              # Saída do preprocessamento (gerado)
-│   └── modelagem/                                # Resultados e modelo final (gerado)
+│   ├── processado/ # Saída do preprocessamento (gerado)
+│   └── modelagem/ # Resultados e modelo final (gerado)
 └── README.md
 ```
 
@@ -57,7 +57,7 @@ git clone https://github.com/hikazudani/fraud-detection.git
 cd fraud-detection
 
 python -m venv .venv
-.venv\Scripts\activate      # Windows
+.venv\Scripts\activate # Windows
 # source .venv/bin/activate # Linux/Mac
 
 pip install -r requirements.txt
