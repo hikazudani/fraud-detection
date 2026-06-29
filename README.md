@@ -28,7 +28,7 @@ Todos os critérios de sucesso definidos na proposta foram atendidos. Detalhes d
 
 ```
 fraud-detection/
-├── proposta-projeto.md                          # Proposta formal + resultados consolidados
+├── proposta-projeto.md # Proposta formal + resultados consolidados
 ├── requirements.txt
 ├── notebooks/
 │   ├── eda_fraud_detection_refatorado.ipynb # Análise exploratória
