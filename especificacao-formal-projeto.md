@@ -1,18 +1,20 @@
-# Proposta Final de Projeto - Detecção de Fraude em Transações Financeiras
+# Entrega 1 - Especificação Formal do Projeto (Grupo 3)
 
 **Título do projeto:** Detecção de Fraude em Transações Financeiras: avaliação de desempenho, desbalanceamento extremo, custo do erro e tempo de inferência
 
-**Entrega:** Especificação formal do projeto + resultados finais de modelagem  
+**Entrega:** Especificação formal do projeto + resultados preliminares de modelagem  
 **Data:** 30 de junho de 2026  
 **Disciplina:** Projetos de IA  
+**Professor:** Nicksson Freitas  
+**Equipe:** George Lucas Lopes da Silva; Lucas Gabriel Carvalho dos Ramos; Alexsandro Barreto de Abreu; Lucas Jundi Hikazudani; Martony Demes da Silva; Stefferson Bruno Costa Ferreira; João Pedro Piccino Marafiotti  
 
 ---
 
 ## Resumo executivo
 
-Este documento consolida a proposta formal do projeto e incorpora os resultados finais da etapa de modelagem. O objetivo foi avaliar modelos de machine learning para detecção de fraude em transações financeiras sintéticas, considerando desempenho na classe minoritária, robustez a diferentes níveis de desbalanceamento, custo dos erros e tempo de inferência.
+Este documento consolida a proposta formal do projeto e incorpora resultados preliminares do primeiro ciclo de modelagem. O objetivo foi avaliar modelos de machine learning para detecção de fraude em transações financeiras sintéticas, considerando desempenho na classe minoritária, robustez a diferentes níveis de desbalanceamento, custo dos erros e tempo de inferência.
 
-O modelo final selecionado foi o **XGBoost com `scale_pos_weight` e threshold otimizado**, no cenário **sem variáveis pós-transação**, por apresentar o melhor compromisso entre detecção, custo e viabilidade operacional.
+O modelo selecionado no ciclo preliminar foi o **XGBoost com `scale_pos_weight` e threshold otimizado**, no cenário **sem variáveis pós-transação**, por apresentar o melhor compromisso entre detecção, custo e viabilidade operacional.
 
 ---
 
@@ -41,11 +43,15 @@ O problema foi tratado como uma tarefa de classificação binária supervisionad
 
 **Pergunta complementar:** até que nível de desbalanceamento um modelo consegue manter recall e F1-score aceitáveis sem ultrapassar um tempo de resposta operacionalmente viável?
 
-### 1.3 Objetivo geral
+### 1.3 Hipótese
+
+A hipótese do projeto é que modelos baseados em árvores, especialmente o XGBoost com ponderação da classe minoritária e ajuste de threshold, apresentam desempenho superior às baselines simples e à Regressão Logística na detecção de fraude. Espera-se que essa abordagem alcance F1-score de pelo menos 0,85 para a classe fraude, mantendo tempo de inferência compatível com o limite operacional acadêmico definido.
+
+### 1.4 Objetivo geral
 
 Avaliar modelos de machine learning para detecção de fraude em transações financeiras sintéticas, considerando simultaneamente desempenho na classe minoritária, robustez a diferentes níveis de desbalanceamento, custo dos erros e tempo de inferência compatível com um cenário de decisão rápida.
 
-### 1.4 Objetivos específicos
+### 1.5 Objetivos específicos
 
 1. Investigar abordagens utilizadas na literatura recente para detecção de fraude financeira em dados desbalanceados.
 2. Construir baselines simples e interpretáveis, incluindo regra por tipo/valor e uso da coluna `isFlaggedFraud` apenas como referência comparativa.
@@ -56,7 +62,7 @@ Avaliar modelos de machine learning para detecção de fraude em transações fi
 7. Testar a robustez dos modelos sob diferentes imbalance ratios.
 8. Simular o impacto de falsos positivos e falsos negativos por meio de matriz de custo configurável.
 
-### 1.5 Escopo e limitações
+### 1.6 Escopo e limitações
 
 O projeto não pretende criar um sistema real de prevenção a fraude para produção. O escopo é acadêmico e experimental. O dataset é sintético e não representa diretamente dados reais do Pix ou de uma instituição financeira brasileira. Ainda assim, ele é adequado para estudar alto volume, classe minoritária rara, efeitos de desbalanceamento e comparação entre estratégias de modelagem.
 
@@ -115,7 +121,11 @@ A escolha das referências priorizou trabalhos de 2022 a 2026. Referências ante
 
 O dataset escolhido é o **PaySim Synthetic Financial Dataset**, disponível no Kaggle. Ele contém transações financeiras sintéticas geradas pelo simulador PaySim, inspirado em transações de mobile money. O dataset possui aproximadamente **6,3 milhões de transações**, cerca de **470 MB** e **11 variáveis**.
 
-**Licença:** Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0), conforme documentação do dataset.
+**Licença:** Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0), conforme documentação do dataset.  
+**Fonte:** https://www.kaggle.com/datasets/ealaxi/paysim1  
+**Data de acesso:** 29 de maio de 2026.  
+**Versão/snapshot:** Version 2 disponibilizada no Kaggle.  
+**Autenticação:** o download requer conta e credenciais configuradas no Kaggle, utilizadas no projeto por meio da biblioteca `kagglehub`.
 
 ### 3.2 Estrutura dos dados
 
@@ -153,7 +163,13 @@ O dataset escolhido é o **PaySim Synthetic Financial Dataset**, disponível no 
 | Split aleatório otimista | Avaliação pode ficar distante de cenário real | Priorizar split temporal por `step` |
 | Custo computacional | Modelos lentos podem ser inviáveis | Medir tempo de treino e inferência |
 
-### 3.5 Pré-processamento executado
+### 3.5 Ética e privacidade
+
+O dataset PaySim é sintético e não contém informações pessoais reais de clientes. Assim, este estudo não utiliza dados pessoais identificáveis nem dados financeiros reais. Ainda assim, sistemas de detecção de fraude aplicados em ambientes reais podem afetar usuários legítimos por meio de falsos positivos, como bloqueios indevidos ou atrito na experiência de pagamento.
+
+Por esse motivo, o projeto avalia não apenas recall, mas também precision, custo dos erros e limitações de generalização. A licença CC BY-SA 4.0 permite o uso acadêmico do dataset, desde que a atribuição à fonte seja preservada.
+
+### 3.6 Pré-processamento executado
 
 1. Remoção de `isFlaggedFraud` das features principais, mantendo-a apenas como referência comparativa.
 2. Remoção de `nameOrig` e `nameDest` como variáveis diretas.
@@ -171,19 +187,25 @@ A separação temporal gerou conjuntos com proporções diferentes de fraude, po
 
 ## 4. Metodologia experimental
 
-### 4.1 Protocolo de validação
+### 4.1 Stack técnica
+
+O projeto foi desenvolvido em Python, utilizando pandas, NumPy, scikit-learn, XGBoost, imbalanced-learn, matplotlib, seaborn, joblib e kagglehub. O ambiente é isolado com `venv`, as dependências estão registradas em `requirements.txt` e os principais experimentos utilizam sementes fixas para favorecer a reprodutibilidade.
+
+### 4.2 Protocolo de validação
 
 A avaliação foi feita com separação temporal usando a variável `step`. Essa escolha simula um cenário mais realista: o modelo aprende com transações anteriores e é avaliado em transações futuras. Todas as técnicas de balanceamento foram aplicadas apenas no conjunto de treino, evitando data leakage.
 
-### 4.2 Baselines
+Para viabilizar os experimentos no ambiente acadêmico, os modelos foram treinados com todas as transações fraudulentas disponíveis no conjunto de treino e uma amostra aleatória reprodutível de até 200.000 transações legítimas. Nos experimentos com SMOTE, o limite de transações legítimas foi reduzido para 50.000 devido ao custo computacional do oversampling. Os conjuntos temporais de validação e teste foram mantidos íntegros para a avaliação dos resultados.
+
+### 4.3 Baselines
 
 | Baseline | Descrição | Objetivo |
 |---|---|---|
 | Baseline 0 | Classificar tudo como legítimo | Mostrar por que acurácia é enganosa |
-| Baseline 1 | Usar `isFlaggedFraud` como detector | Comparar com a regra nativa do simulador |
+| Referência diagnóstica | Avaliar `isFlaggedFraud` como detector nativo do simulador | Evidenciar sua cobertura muito baixa e justificar que ela não entra no treino principal |
 | Baseline 2 | Regra `type in {TRANSFER, CASH_OUT}` + threshold de `amount` | Criar referência simples e interpretável |
 
-### 4.3 Modelos e experimentos
+### 4.4 Modelos e experimentos
 
 | Experimento | Modelo | Tratamento do desbalanceamento | Objetivo |
 |---|---|---|---|
@@ -194,7 +216,7 @@ A avaliação foi feita com separação temporal usando a variável `step`. Essa
 | E5 | XGBoost + SMOTE | SMOTE apenas no treino | Comparar oversampling com pesos de classe |
 | E6 | Melhor modelo + ajuste de threshold | Threshold otimizado na validação | Ajustar trade-off entre recall, precision, F1 e custo |
 
-### 4.4 Teste por imbalance ratio
+### 4.5 Teste por imbalance ratio
 
 | Cenário | Proporção aproximada | Objetivo |
 |---|---|---|
@@ -205,7 +227,7 @@ A avaliação foi feita com separação temporal usando a variável `step`. Essa
 
 Esse teste responde diretamente ao feedback recebido, pois permite estimar até qual nível de desbalanceamento a solução continua aceitável.
 
-### 4.5 Tempo de inferência e matriz de custo
+### 4.6 Tempo de inferência e matriz de custo
 
 Cada modelo foi avaliado também pelo tempo médio de inferência por transação, p95 de inferência por transação e tempo total de classificação do conjunto de teste. A meta operacional acadêmica inicial foi:
 
@@ -246,7 +268,7 @@ A seleção do modelo final seguiu uma lógica de compromisso. O melhor modelo n
 
 ### 6.1 Baselines
 
-A baseline que classifica todas as transações como legítimas teve F1-score igual a zero para a classe fraude. Esse resultado confirma que a acurácia, isoladamente, não é uma métrica adequada para este problema. Como a maioria das transações é legítima, um modelo pode apresentar uma acurácia aparentemente alta simplesmente por ignorar a classe minoritária.
+A baseline que classifica todas as transações como legítimas teve F1-score igual a zero para a classe fraude. Esse resultado confirma que a acurácia, isoladamente, não é uma métrica adequada para este problema. Como a maioria das transações é legítima, um modelo pode apresentar uma acurácia aparentemente alta simplesmente por ignorar a classe minoritária. Como referência diagnóstica adicional, a coluna `isFlaggedFraud` sinalizou apenas 16 transações diante das 8.213 fraudes presentes no dataset. Portanto, embora represente uma regra nativa do simulador, ela possui cobertura muito baixa e foi mantida apenas como referência diagnóstica, não como feature do treino principal.
 
 A baseline baseada em uma regra simples usando tipo da transação e valor apresentou desempenho melhor do que a baseline ingênua, mas ainda muito inferior aos modelos supervisionados. No conjunto de teste, essa regra obteve precision de **0,3103**, recall de **0,2875** e F1-score de **0,2985** para a classe fraude. Apesar de ser interpretável, ela não foi suficiente para capturar a complexidade do problema.
 
