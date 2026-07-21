@@ -7,6 +7,8 @@
 **Disciplina:** Projetos de IA  
 **Professor:** Nicksson Freitas  
 **Equipe:** George Lucas Lopes da Silva; Lucas Gabriel Carvalho dos Ramos; Alexsandro Barreto de Abreu; Lucas Jundi Hikazudani; Martony Demes da Silva; Stefferson Bruno Costa Ferreira; João Pedro Piccino Marafiotti  
+**Data de entrega:** 
+**Data de apresentação:** 
 
 ---
 
