@@ -6,4 +6,5 @@ __pycache__/
 .env
 data/modelagem
 data/processado
+notebooks/data/
 proposta_final_fraude_transacoes_financeiras.pdf

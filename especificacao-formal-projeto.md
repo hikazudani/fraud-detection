@@ -14,9 +14,9 @@
 
 ## Resumo executivo
 
-Este documento consolida a proposta formal do projeto e incorpora resultados preliminares do primeiro ciclo de modelagem. O objetivo foi avaliar modelos de machine learning para detecção de fraude em transações financeiras sintéticas, considerando desempenho na classe minoritária, robustez a diferentes níveis de desbalanceamento, custo dos erros e tempo de inferência.
+Este documento consolida a proposta formal do projeto e incorpora resultados preliminares do primeiro ciclo de modelagem, além da extensão executada no notebook principal com modelos adicionais de gradient boosting e análise de calibração de probabilidade. O objetivo foi avaliar modelos de machine learning para detecção de fraude em transações financeiras sintéticas, considerando desempenho na classe minoritária, robustez a diferentes níveis de desbalanceamento, custo dos erros, tempo de inferência e qualidade probabilística após calibração.
 
-O modelo selecionado no ciclo preliminar foi o **XGBoost com `scale_pos_weight` e threshold otimizado**, no cenário **sem variáveis pós-transação**, por apresentar o melhor compromisso entre detecção, custo e viabilidade operacional.
+O ciclo atual ampliou a comparação para incluir **XGBoost e LightGBM**, com estratégias de pesos de classe, SMOTE e ajuste de threshold. A análise operacional mostrou que o cenário **sem variáveis pós-transação** continua sendo o mais conservador e mais adequado para comparação, enquanto a calibração de probabilidade passou a ser tratada como etapa complementar de avaliação da qualidade das previsões.
 
 ---
 
@@ -47,7 +47,7 @@ O problema foi tratado como uma tarefa de classificação binária supervisionad
 
 ### 1.3 Hipótese
 
-A hipótese do projeto é que modelos baseados em árvores, especialmente o XGBoost com ponderação da classe minoritária e ajuste de threshold, apresentam desempenho superior às baselines simples e à Regressão Logística na detecção de fraude. Espera-se que essa abordagem alcance F1-score de pelo menos 0,85 para a classe fraude, mantendo tempo de inferência compatível com o limite operacional acadêmico definido.
+A hipótese do projeto é que modelos baseados em árvores, especialmente o XGBoost e o LightGBM com ponderação da classe minoritária e ajuste de threshold, apresentam desempenho superior às baselines simples e à Regressão Logística na detecção de fraude. Espera-se que essas abordagens alcancem F1-score de pelo menos 0,85 para a classe fraude, mantendo tempo de inferência compatível com o limite operacional acadêmico definido, e que a calibração de probabilidade melhore a confiabilidade das probabilidades produzidas pelo modelo.
 
 ### 1.4 Objetivo geral
 
@@ -57,12 +57,13 @@ Avaliar modelos de machine learning para detecção de fraude em transações fi
 
 1. Investigar abordagens utilizadas na literatura recente para detecção de fraude financeira em dados desbalanceados.
 2. Construir baselines simples e interpretáveis, incluindo regra por tipo/valor e uso da coluna `isFlaggedFraud` apenas como referência comparativa.
-3. Treinar modelos supervisionados clássicos e eficientes para dados tabulares, como Regressão Logística, Random Forest e XGBoost.
+3. Treinar modelos supervisionados clássicos e eficientes para dados tabulares, como Regressão Logística, Random Forest, XGBoost e LightGBM.
 4. Comparar estratégias para lidar com desbalanceamento, incluindo pesos de classe, SMOTE e ajuste de threshold de decisão.
 5. Avaliar os modelos com foco na classe fraude, usando recall, precision, F1-score, AUPRC e matriz de confusão.
 6. Medir o tempo médio de inferência por transação e comparar o custo operacional dos modelos.
 7. Testar a robustez dos modelos sob diferentes imbalance ratios.
 8. Simular o impacto de falsos positivos e falsos negativos por meio de matriz de custo configurável.
+9. Avaliar a qualidade probabilística dos modelos por meio de calibração com `CalibratedClassifierCV`, usando curvas de calibração e métricas como Brier score.
 
 ### 1.6 Escopo e limitações
 
@@ -85,7 +86,7 @@ Neste projeto, a literatura foi usada para evitar escolhas ingênuas. O objetivo
 | Tema observado na literatura | O que já foi tentado | Decisão para este projeto |
 |---|---|---|
 | Dados sintéticos de fraude | PaySim foi proposto para contornar a dificuldade de acesso a dados financeiros reais. | Usar PaySim como base experimental, deixando explícito que os resultados não equivalem a validação em Pix real. |
-| Modelos tabulares | Regressão Logística, Random Forest, XGBoost e variações de gradient boosting são recorrentes. | Usar Regressão Logística como baseline supervisionado e Random Forest/XGBoost como modelos principais. |
+| Modelos tabulares | Regressão Logística, Random Forest, XGBoost, LightGBM e variações de gradient boosting são recorrentes. | Usar Regressão Logística como baseline supervisionado e Random Forest/XGBoost/LightGBM como modelos principais. |
 | Desbalanceamento | SMOTE, undersampling, pesos de classe, threshold moving e métodos híbridos são frequentes. | Comparar SMOTE, pesos de classe e ajuste de threshold, sem assumir previamente que SMOTE será melhor. |
 | Vazamento de dados | Estudos recentes mostram que aplicar sampling antes do split pode inflar artificialmente os resultados. | Aplicar SMOTE apenas no treino, depois da separação treino/validação/teste. |
 | Métricas | Acurácia é inadequada em fraude; precision, recall, F1 e AUPRC são mais informativas para a classe minoritária. | Não usar acurácia como critério principal. Usar recall, precision, F1 e AUPRC. |
@@ -191,7 +192,7 @@ A separação temporal gerou conjuntos com proporções diferentes de fraude, po
 
 ### 4.1 Stack técnica
 
-O projeto foi desenvolvido em Python, utilizando pandas, NumPy, scikit-learn, XGBoost, imbalanced-learn, matplotlib, seaborn, joblib e kagglehub. O ambiente é isolado com `venv`, as dependências estão registradas em `requirements.txt` e os principais experimentos utilizam sementes fixas para favorecer a reprodutibilidade.
+O projeto foi desenvolvido em Python, utilizando pandas, NumPy, scikit-learn, XGBoost, imbalanced-learn, matplotlib, seaborn, joblib e kagglehub. As dependências estão registradas em `requirements.txt` e os principais experimentos utilizam sementes fixas para favorecer a reprodutibilidade.
 
 ### 4.2 Protocolo de validação
 
@@ -214,9 +215,12 @@ Para viabilizar os experimentos no ambiente acadêmico, os modelos foram treinad
 | E1 | Regressão Logística | `class_weight='balanced'` | Baseline supervisionado simples e rápido |
 | E2 | Random Forest | `class_weight='balanced'` | Modelo não linear robusto para dados tabulares |
 | E3 | XGBoost | `scale_pos_weight` | Modelo principal por bom desempenho e eficiência em dados tabulares |
-| E4 | Random Forest + SMOTE | SMOTE apenas no treino | Avaliar ganho/perda do oversampling |
-| E5 | XGBoost + SMOTE | SMOTE apenas no treino | Comparar oversampling com pesos de classe |
-| E6 | Melhor modelo + ajuste de threshold | Threshold otimizado na validação | Ajustar trade-off entre recall, precision, F1 e custo |
+| E4 | LightGBM | `scale_pos_weight` | Comparar alternativa de gradient boosting mais leve e eficiente |
+| E5 | Random Forest + SMOTE | SMOTE apenas no treino | Avaliar ganho/perda do oversampling |
+| E6 | XGBoost + SMOTE | SMOTE apenas no treino | Comparar oversampling com pesos de classe |
+| E7 | LightGBM + SMOTE | SMOTE apenas no treino | Comparar um segundo gradient boosting sob oversampling |
+| E8 | Melhor modelo + ajuste de threshold | Threshold otimizado na validação | Ajustar trade-off entre recall, precision, F1 e custo |
+| E9 | Calibração de probabilidade | `CalibratedClassifierCV` com sigmoid/isotonic | Avaliar qualidade probabilística e Brier score dos modelos de boosting |
 
 ### 4.5 Teste por imbalance ratio
 
@@ -276,12 +280,14 @@ A baseline baseada em uma regra simples usando tipo da transação e valor apres
 
 ### 6.2 Comparação dos modelos no cenário operacional
 
-A tabela abaixo resume os principais resultados no cenário `sem_pos_transacao`, escolhido como cenário operacional mais conservador.
+A tabela abaixo resume os principais resultados no cenário `sem_pos_transacao`, escolhido como cenário operacional mais conservador. A extensão do notebook atual incluiu também o LightGBM e a análise de calibração de probabilidade, de modo que a comparação final passou a considerar uma segunda alternativa de gradient boosting além do XGBoost.
 
 | Modelo | Precision | Recall | F1 | AUPRC | FP | FN | Custo total |
 |---|---:|---:|---:|---:|---:|---:|---:|
 | XGBoost `scale_pos_weight` | 0,9183 | 0,8442 | 0,8797 | 0,9570 | 94 | 195 | 98.440 |
+| LightGBM `scale_pos_weight` | 0,8959 | 0,8666 | 0,8810 | 0,9543 | 126 | 178 | 109.140 |
 | XGBoost + SMOTE | 0,9532 | 0,7971 | 0,8682 | 0,9498 | 49 | 254 | 127.490 |
+| LightGBM + SMOTE | 0,8273 | 0,9105 | 0,8669 | 0,9585 | 238 | 119 | 180.500 |
 | Random Forest `class_weight` | 0,9059 | 0,7995 | 0,8494 | 0,9096 | 104 | 251 | 126.540 |
 | Random Forest + SMOTE | 0,9128 | 0,7524 | 0,8249 | 0,8716 | 90 | 310 | 155.900 |
 | Regressão Logística `class_weight` | 0,7127 | 0,5527 | 0,6226 | 0,6593 | 279 | 560 | 282.790 |
@@ -290,7 +296,9 @@ A tabela abaixo resume os principais resultados no cenário `sem_pos_transacao`,
 
 ### 6.3 Modelo final escolhido
 
-O melhor modelo operacional foi o **XGBoost com `scale_pos_weight` e threshold otimizado**, utilizando o cenário `sem_pos_transacao`. Esse modelo obteve precision de **0,9183**, recall de **0,8442** e F1-score de **0,8797** para a classe fraude no conjunto de teste. Além disso, apresentou AUPRC de **0,9570**, indicando boa capacidade de ranquear transações fraudulentas acima das legítimas.
+Na versão preliminar do projeto, o melhor compromisso operacional foi o **XGBoost com `scale_pos_weight` e threshold otimizado**. Na extensão atual do notebook, a comparação foi ampliada para incluir o **LightGBM** e a **calibração de probabilidade**, e a seleção operacional final passou a considerar o critério de equilíbrio entre recall, custo total e qualidade probabilística. Com isso, o **LightGBM + SMOTE** apareceu como alternativa de destaque pelo maior recall e AUPRC, enquanto o **XGBoost `scale_pos_weight`** continuou sendo uma referência muito forte em precision/F1 no cenário mais conservador.
+
+Em termos de decisão acadêmica, a conclusão com a extensão atual é que o problema não tem um único melhor modelo absoluto. O XGBoost continua excelente para um compromisso de alta precision e F1, enquanto o LightGBM + SMOTE se mostra competitivo quando a prioridade é capturar mais fraudes com melhor capacidade de rankeamento probabilístico.
 
 |  | Prevista legítima | Prevista fraude |
 |---|---:|---:|
@@ -321,7 +329,7 @@ Apesar de parecer um resultado excelente, esse desempenho deve ser interpretado 
 
 O SMOTE foi aplicado apenas ao conjunto de treino, após a separação temporal dos dados, evitando vazamento de informação. Essa decisão segue a metodologia definida na proposta, pois aplicar oversampling antes da divisão entre treino, validação e teste poderia gerar resultados artificialmente altos.
 
-Nos experimentos realizados, o uso de SMOTE melhorou a precision em alguns casos, mas não superou o XGBoost com `scale_pos_weight` no equilíbrio geral. O XGBoost + SMOTE obteve precision de **0,9532**, recall de **0,7971** e F1-score de **0,8682**. Apesar da alta precision, o recall ficou abaixo da meta de 0,80 e o custo total foi maior que o do XGBoost com `scale_pos_weight`. Esse resultado reforça que SMOTE não deve ser assumido como melhor solução automaticamente.
+Nos experimentos realizados, o uso de SMOTE melhorou a precision em alguns casos, mas não superou o XGBoost com `scale_pos_weight` no equilíbrio geral. O XGBoost + SMOTE obteve precision de **0,9532**, recall de **0,7971** e F1-score de **0,8682**. Já o LightGBM + SMOTE mostrou desempenho especialmente forte em recall e AUPRC, reforçando que o ganho do oversampling depende do classificador e do critério operacionaI adotado. Esse resultado reforça que SMOTE não deve ser assumido como melhor solução automaticamente.
 
 ### 6.7 Robustez por imbalance ratio
 
@@ -360,8 +368,8 @@ Por fim, o teste por imbalance ratio mostrou que o modelo mantém recall acima d
 |---|---|---|
 | `proposta-projeto.md` / proposta formal | Concluído | Documento consolidado com problema, dados, metodologia, métricas e literatura. |
 | Notebook de EDA e pré-processamento | Concluído | EDA, engenharia de atributos, split temporal e geração dos dados processados. |
-| Notebook de modelagem | Concluído | Baselines, Random Forest, XGBoost, SMOTE, threshold, custo e tempo. |
-| Tabela comparativa | Concluído | Tabela com métricas de detecção, custo total e tempo de inferência. |
+| Notebook de modelagem | Concluído | Baselines, Random Forest, XGBoost, LightGBM, SMOTE, threshold, custo, tempo e calibração. |
+| Tabela comparativa | Concluído | Tabela com métricas de detecção, custo total, tempo de inferência e análise de probabilidades. |
 | Dashboard Streamlit | Planejado | Usar resultados salvos para análise de threshold e matriz de custo. |
 | Relatório final | Em consolidação | Discussão dos resultados, limitações e próximos passos. |
 
