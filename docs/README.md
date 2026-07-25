@@ -7,6 +7,7 @@ Este diretório reúne a documentação de apoio do repositório.
 - [Visão geral](01-visao-geral.md)
 - [Pipeline de execução](02-pipeline-execucao.md)
 - [Artefatos e resultados](03-resultados-e-artefatos.md)
+- [Dashboard Streamlit](04-dashboard.md)
 
 ## Objetivo
 
