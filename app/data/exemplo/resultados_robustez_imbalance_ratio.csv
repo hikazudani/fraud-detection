@@ -1,0 +1,5 @@
+conjunto,cenario_features,modelo,threshold,imbalance_ratio_alvo,total_amostra,fraudes_amostra,legitimas_amostra,precision_fraude,recall_fraude,f1_fraude,auprc,tn,fp,fn,tp,custo_total,tempo_medio_ms_por_transacao,tempo_p95_ms_por_transacao
+teste_IR_1:100,sem_pos_transacao,XGBoost - scale_pos_weight,,100,30300,300,30000,0.9053,0.86,0.8821,0.9533,29973,27,42,258,21270,,
+teste_IR_1:500,sem_pos_transacao,XGBoost - scale_pos_weight,,500,88176,176,88000,0.6225,0.8807,0.7294,0.8806,87906,94,21,155,11440,,
+teste_IR_1:1000,sem_pos_transacao,XGBoost - scale_pos_weight,,1000,88088,88,88000,0.4371,0.8295,0.5725,0.7762,87906,94,15,73,8440,,
+teste_IR_1:2000,sem_pos_transacao,XGBoost - scale_pos_weight,,2000,88044,44,88000,0.2791,0.8182,0.4162,0.7012,87907,93,8,36,4930,,

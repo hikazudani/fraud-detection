@@ -1,0 +1,8 @@
+conjunto,cenario_features,modelo,threshold,accuracy,precision_fraude,recall_fraude,f1_fraude,auprc,roc_auc,tn,fp,fn,tp,custo_total,tempo_medio_ms_por_transacao,tempo_p95_ms_por_transacao
+teste,sem_pos_transacao,XGBoost - scale_pos_weight - threshold otimizado F1,,0.99677,0.9183,0.8442,0.8797,0.957,,88120,94,195,1057,98440,0.004371,0.004517
+teste,sem_pos_transacao,XGBoost + SMOTE - threshold otimizado F1,,0.996613,0.9532,0.7971,0.8682,0.9498,,88165,49,254,998,127490,,
+teste,sem_pos_transacao,Random Forest - class_weight - threshold otimizado F1,,0.996032,0.9059,0.7995,0.8494,0.9096,,88110,104,251,1001,126540,,
+teste,sem_pos_transacao,Random Forest + SMOTE - threshold otimizado F1,,0.995529,0.9128,0.7524,0.8249,0.8716,,88124,90,310,942,155900,,
+teste,sem_pos_transacao,Regressão Logística - class_weight - threshold otimizado F1,,0.990622,0.7127,0.5527,0.6226,0.6593,,87935,279,560,692,282790,,
+teste,sem_pos_transacao,Baseline regra type + amount,,0.981088,0.3103,0.2875,0.2985,0.0992,,87414,800,892,360,454000,,
+teste,sem_pos_transacao,Baseline tudo legítimo,,0.986006,0.0,0.0,0.0,0.014,,88214,0,1252,0,626000,,
