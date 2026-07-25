@@ -112,8 +112,12 @@ que habilitam o slider de threshold do simulador de custo:
 python scripts/exportar_artefatos_dashboard.py
 ```
 
-Detalhes de arquitetura, schema dos dados e estratégia de cache em
-[docs/04-dashboard.md](docs/04-dashboard.md).
+A dashboard também pode ser publicada gratuitamente no Streamlit Community
+Cloud, apontando para `app/streamlit_app.py`. As dependências do deploy ficam em
+`app/requirements.txt`, sem as bibliotecas de treino.
+
+Detalhes de arquitetura, schema dos dados, estratégia de cache e passos de
+publicação em [docs/04-dashboard.md](docs/04-dashboard.md).
 
 ### 3. Verificar os artefatos gerados
 
