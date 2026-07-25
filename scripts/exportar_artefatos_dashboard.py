@@ -10,10 +10,16 @@ recalculado a partir das contagens da matriz de confusão por threshold.
 Este script deriva esses dois arquivos, somando menos de 50 KB, para que a
 dashboard funcione sem depender do dataset completo.
 
+Com `--incluir-resultados`, também copia os arquivos de resultados (poucos KB
+cada) para a mesma pasta. Como `app/data/dashboard` não é ignorada pelo Git,
+isso permite versionar tudo o que a dashboard precisa e publicá-la na web com
+os números reais.
+
 Uso:
 
     python scripts/exportar_artefatos_dashboard.py
     python scripts/exportar_artefatos_dashboard.py --entrada notebooks/data/modelagem
+    python scripts/exportar_artefatos_dashboard.py --incluir-resultados
     python scripts/exportar_artefatos_dashboard.py --n-thresholds 400 --max-pontos-pr 800
 """
 
@@ -21,6 +27,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import shutil
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -38,6 +45,15 @@ SAIDA_PADRAO = RAIZ_PROJETO / "app" / "data" / "dashboard"
 
 ARQUIVO_PREDICOES = "predicoes_teste_melhor_modelo.csv"
 ARQUIVO_METADATA = "metadata_modelagem.json"
+
+# Arquivos de resultados, todos de poucos KB, copiáveis com --incluir-resultados.
+ARQUIVOS_RESULTADOS = (
+    "resultados_teste.csv",
+    "resultado_modelo_final.csv",
+    "resultados_robustez_imbalance_ratio.csv",
+    "tabela_principal_modelos.csv",
+    ARQUIVO_METADATA,
+)
 
 
 def caminho_legivel(caminho: Path) -> str:
@@ -68,6 +84,12 @@ def analisar_argumentos() -> argparse.Namespace:
     parser.add_argument(
         "--max-pontos-pr", type=int, default=500,
         help="Máximo de pontos na curva Precision-Recall.",
+    )
+    parser.add_argument(
+        "--incluir-resultados", action="store_true",
+        help="Copia também os arquivos de resultados (poucos KB cada) para a pasta "
+             "de saída, permitindo versioná-los e publicar a dashboard com os "
+             "números reais.",
     )
     return parser.parse_args()
 
@@ -110,6 +132,29 @@ def carregar_metadata(entrada: Path) -> dict:
 
     with open(caminho, encoding="utf-8") as arquivo:
         return json.load(arquivo)
+
+
+def copiar_resultados(entrada: Path, saida: Path) -> list[Path]:
+    """Copia os arquivos de resultados para a pasta de saída.
+
+    São arquivos de poucos kilobytes, ao contrário das predições e do modelo
+    serializado. Copiá-los para `app/data/dashboard` permite versioná-los e
+    publicar a dashboard com os números reais, sem carregar o dataset.
+    """
+    copiados = []
+
+    for nome in ARQUIVOS_RESULTADOS:
+        origem = entrada / nome
+
+        if not origem.is_file():
+            print(f"[aviso] {nome} não encontrado em {caminho_legivel(entrada)}; pulando.")
+            continue
+
+        destino = saida / nome
+        shutil.copyfile(origem, destino)
+        copiados.append(destino)
+
+    return copiados
 
 
 def obter_threshold_operacional(predicoes: pd.DataFrame, metadata: dict) -> float | None:
@@ -177,16 +222,35 @@ def main() -> None:
         json.dump(manifest, arquivo, ensure_ascii=False, indent=4)
         arquivo.write("\n")
 
+    gerados = [caminho_sweep, caminho_pr, caminho_manifest]
+
+    if argumentos.incluir_resultados:
+        gerados.extend(copiar_resultados(argumentos.entrada, argumentos.saida))
+
     print("\nArquivos gerados:")
-    for caminho in (caminho_sweep, caminho_pr, caminho_manifest):
+    total_kb = 0.0
+    for caminho in gerados:
         tamanho_kb = caminho.stat().st_size / 1024
+        total_kb += tamanho_kb
         print(f"  {caminho_legivel(caminho)} ({tamanho_kb:.1f} KB)")
+    print(f"  total: {total_kb:.1f} KB")
 
     print(f"\nAUPRC: {auprc:.4f} · prevalência: {manifest['prevalencia']:.6f}")
     print(
         "\nA dashboard passa a usar estes arquivos automaticamente. "
         "Eles são pequenos o suficiente para serem versionados."
     )
+
+    if argumentos.incluir_resultados:
+        print(
+            "\nPara publicar a dashboard com estes números, versione a pasta:\n"
+            f"  git add {caminho_legivel(argumentos.saida)}"
+        )
+    else:
+        print(
+            "\nUse --incluir-resultados para copiar também os arquivos de "
+            "resultados e poder versionar tudo o que a dashboard precisa."
+        )
 
 
 if __name__ == "__main__":
