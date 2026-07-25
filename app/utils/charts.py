@@ -115,6 +115,16 @@ def _formato_altair(formato: str) -> str:
     return {"decimal": ".4f", "moeda": ",.0f", "inteiro": ",.0f", "ms": ".6f"}.get(formato, ".4f")
 
 
+def formatar_milhar(valor: float, decimais: int = 0) -> str:
+    """Formata um número no padrão brasileiro (ponto de milhar, vírgula decimal).
+
+    Formatar cada número isoladamente evita o erro de aplicar a troca de
+    separadores sobre uma frase inteira, que corromperia as vírgulas do texto.
+    """
+    texto = f"{valor:,.{decimais}f}"
+    return texto.replace(",", "\x00").replace(".", ",").replace("\x00", ".")
+
+
 # --------------------------------------------------------------------------- #
 # Seção 1 — comparação de modelos
 # --------------------------------------------------------------------------- #
