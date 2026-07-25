@@ -1,0 +1,46 @@
+{
+    "data_execucao": "2026-07-25T13:42:55",
+    "modo_rapido": true,
+    "cenario_final_operacional": "sem_pos_transacao",
+    "max_legitimas_treino": 200000,
+    "max_legitimas_smote": 50000,
+    "custos": {
+        "custo_fp": 10,
+        "custo_fn": 500
+    },
+    "metas": {
+        "recall_minimo": 0.8,
+        "precision_minima": 0.6,
+        "tempo_medio_ms_maximo": 50.0
+    },
+    "melhor_modelo_base": "LightGBM + SMOTE",
+    "melhor_cenario_features": "sem_pos_transacao",
+    "melhor_threshold": 0.99,
+    "criterio_selecao": "modelo operacional elegível com menor custo total",
+    "features_usadas": [
+        "step",
+        "dia_simulado",
+        "hora_simulada",
+        "amount",
+        "log_amount",
+        "oldbalanceOrg",
+        "oldbalanceDest",
+        "origem_saldo_inicial_zero",
+        "destino_saldo_inicial_zero",
+        "type_PAYMENT",
+        "type_TRANSFER",
+        "type_CASH_OUT",
+        "type_DEBIT",
+        "type_CASH_IN"
+    ],
+    "arquivos_gerados": {
+        "resultados_validacao": "data/modelagem/resultados_validacao.csv",
+        "resultados_teste": "data/modelagem/resultados_teste.csv",
+        "tabela_principal_modelos": "data/modelagem/tabela_principal_modelos.csv",
+        "resultado_modelo_final": "data/modelagem/resultado_modelo_final.csv",
+        "resultados_ir": "data/modelagem/resultados_robustez_imbalance_ratio.csv",
+        "resultados_calibracao": "data/modelagem/resultados_calibracao.csv",
+        "predicoes_teste": "data/modelagem/predicoes_teste_melhor_modelo.csv",
+        "modelo": "data/modelagem/melhor_modelo.joblib"
+    }
+}

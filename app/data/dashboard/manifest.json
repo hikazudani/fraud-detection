@@ -1,0 +1,13 @@
+{
+    "fonte": "notebooks/data/modelagem/predicoes_teste_melhor_modelo.csv",
+    "data_export": "2026-07-25T13:43:52",
+    "modelo": "LightGBM + SMOTE",
+    "cenario": "sem_pos_transacao",
+    "threshold_operacional": 0.99,
+    "n_teste": 89466,
+    "fraudes_teste": 1252,
+    "prevalencia": 0.01399414302640109,
+    "auprc": 0.9585461929586464,
+    "n_thresholds": 199,
+    "n_pontos_curva_pr": 500
+}
