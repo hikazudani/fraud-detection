@@ -64,11 +64,19 @@ fraud-detection/
 │   ├── eda_fraud_detection_refatorado.ipynb
 │   ├── preprocessamento_fraud_detection.ipynb
 │   └── modelagem_fraud_detection_refatorado_limpo.ipynb
+├── app/
+│   ├── streamlit_app.py
+│   ├── pages/
+│   ├── utils/
+│   └── data/exemplo/
+├── scripts/
+│   └── exportar_artefatos_dashboard.py
 ├── docs/
 │   ├── README.md
 │   ├── 01-visao-geral.md
 │   ├── 02-pipeline-execucao.md
-│   └── 03-resultados-e-artefatos.md
+│   ├── 03-resultados-e-artefatos.md
+│   └── 04-dashboard.md
 ```
 
 ## Pré-requisitos
@@ -84,6 +92,28 @@ fraud-detection/
 1. `eda_fraud_detection_refatorado.ipynb`
 2. `preprocessamento_fraud_detection.ipynb`
 3. `modelagem_fraud_detection_refatorado_limpo.ipynb`
+
+### 2. Abrir a dashboard
+
+```bash
+pip install -r requirements.txt
+streamlit run app/streamlit_app.py
+```
+
+A dashboard consome os resultados já salvos e não treina modelos. Ela abre
+mesmo sem nenhum artefato em disco, usando o seed de demonstração versionado em
+`app/data/exemplo` e sinalizando isso na barra lateral. Assim que os notebooks
+forem executados, os artefatos reais passam a ser usados automaticamente.
+
+Para gerar os arquivos leves de curva Precision-Recall e de sweep de threshold,
+que habilitam o slider de threshold do simulador de custo:
+
+```bash
+python scripts/exportar_artefatos_dashboard.py
+```
+
+Detalhes de arquitetura, schema dos dados e estratégia de cache em
+[docs/04-dashboard.md](docs/04-dashboard.md).
 
 ### 3. Verificar os artefatos gerados
 
@@ -105,6 +135,7 @@ Os resultados esperados são gerados em pastas de saída temporárias e não dev
 - matplotlib/seaborn
 - joblib
 - kagglehub
+- Streamlit + Altair (dashboard)
 
 ## Metodologia resumida
 
@@ -141,6 +172,6 @@ Para documentação mais aprofundada, consulte:
 | Pré-processamento | Concluído |
 | Modelagem e avaliação | Concluído |
 | Calibração de probabilidade | Concluído |
-| Dashboard/visualização final | Planejado |
+| Dashboard/visualização final | Concluído |
 | Relatório consolidado | Em consolidação |
 
