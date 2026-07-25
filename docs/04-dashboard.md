@@ -25,6 +25,43 @@ Opcionalmente, gere os artefatos leves de curva e sweep:
 python scripts/exportar_artefatos_dashboard.py
 ```
 
+## Publicar na web (Streamlit Community Cloud)
+
+O repositório é público, o que atende ao plano gratuito. Passos:
+
+1. acesse [share.streamlit.io](https://share.streamlit.io) e conecte a conta do GitHub;
+2. escolha o repositório, a branch e informe `app/streamlit_app.py` como arquivo principal;
+3. publique.
+
+As dependências do deploy ficam em `app/requirements.txt`, propositalmente
+enxuto: apenas `streamlit`, `altair`, `pandas`, `numpy` e `scikit-learn`. Como a
+dashboard não treina modelos, `xgboost`, `lightgbm`, `imbalanced-learn`,
+`kagglehub`, `matplotlib` e `seaborn` ficam fora do build. O `requirements.txt`
+da raiz continua sendo o ambiente completo, usado pelos notebooks.
+
+### Publicar com os números reais
+
+O ambiente de deploy tem apenas o que está versionado, e as pastas `data/` não
+são versionadas. Sem nenhuma providência, a versão publicada abre em modo
+demonstração.
+
+Para publicar com os resultados reais, gere os artefatos leves incluindo os
+arquivos de resultados e versione a pasta:
+
+```bash
+python scripts/exportar_artefatos_dashboard.py --incluir-resultados
+git add app/data/dashboard
+git commit -m "chore(dashboard): update published results"
+```
+
+São cerca de 45 KB no total. Com eles a versão publicada mostra a comparação de
+modelos, a matriz de confusão, a curva Precision-Recall completa, o simulador
+com slider de threshold ativo, a robustez por imbalance ratio e os tempos de
+inferência — tudo sem as ~89 mil linhas de predições nem o dataset de 470 MB.
+
+O que **não** deve ser versionado: `predicoes_teste_melhor_modelo.csv` (~3 MB),
+`melhor_modelo.joblib` e qualquer conteúdo de `data/processado`.
+
 ## Páginas
 
 | Página | Conteúdo |
