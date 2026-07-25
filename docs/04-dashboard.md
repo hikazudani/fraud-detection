@@ -27,6 +27,10 @@ python scripts/exportar_artefatos_dashboard.py
 
 ## Publicar na web (Streamlit Community Cloud)
 
+Instância publicada:
+[fraud-detection-cteia.streamlit.app](https://fraud-detection-cteia.streamlit.app/),
+servida a partir da branch `feat/streamlit-fraud-dashboard`.
+
 O repositório é público, o que atende ao plano gratuito. Passos:
 
 1. acesse [share.streamlit.io](https://share.streamlit.io) e conecte a conta do GitHub;

@@ -1,5 +1,7 @@
 # Detecção de Fraude em Transações Financeiras
 
+**Dashboard publicada: [fraud-detection-cteia.streamlit.app](https://fraud-detection-cteia.streamlit.app/)**
+
 Projeto acadêmico da disciplina de Projetos de IA para detecção de fraude em transações financeiras sintéticas. O foco do repositório é avaliar modelos supervisionados para classificação binária em um cenário fortemente desbalanceado, com atenção especial a:
 
 - recall e precision da classe fraude;
@@ -112,9 +114,10 @@ que habilitam o slider de threshold do simulador de custo:
 python scripts/exportar_artefatos_dashboard.py
 ```
 
-A dashboard também pode ser publicada gratuitamente no Streamlit Community
-Cloud, apontando para `app/streamlit_app.py`. As dependências do deploy ficam em
-`app/requirements.txt`, sem as bibliotecas de treino.
+A dashboard está publicada no Streamlit Community Cloud em
+[fraud-detection-cteia.streamlit.app](https://fraud-detection-cteia.streamlit.app/),
+com os números reais da execução dos notebooks. As dependências do deploy ficam
+em `app/requirements.txt`, sem as bibliotecas de treino.
 
 Detalhes de arquitetura, schema dos dados, estratégia de cache e passos de
 publicação em [docs/04-dashboard.md](docs/04-dashboard.md).
