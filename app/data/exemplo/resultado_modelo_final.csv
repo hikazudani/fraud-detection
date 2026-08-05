@@ -1,0 +1,2 @@
+conjunto,cenario_features,modelo,threshold,accuracy,precision_fraude,recall_fraude,f1_fraude,auprc,roc_auc,tn,fp,fn,tp,custo_total,tempo_medio_ms_por_transacao,tempo_p95_ms_por_transacao
+teste,sem_pos_transacao,XGBoost - scale_pos_weight - threshold otimizado F1,,0.99677,0.9183,0.8442,0.8797,0.957,,88120,94,195,1057,98440,0.004371,0.004517

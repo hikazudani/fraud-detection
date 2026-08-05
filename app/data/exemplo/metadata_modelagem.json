@@ -1,0 +1,30 @@
+{
+    "fonte": "docs/00-project-specification.md",
+    "seed_demonstracao": true,
+    "observacao": "Seed de demonstração transcrito das tabelas 6.2, 6.3, 6.7 e 6.8 da especificação do projeto. tp/tn foram derivados de fp/fn e dos totais do conjunto de teste. Campos não publicados nos documentos ficam vazios: threshold operacional, roc_auc, tempo de inferência dos modelos que não são o final, curva PR e sweep de threshold.",
+    "data_execucao": "2026-06-30",
+    "modo_rapido": true,
+    "cenario_final_operacional": "sem_pos_transacao",
+    "max_legitimas_treino": 200000,
+    "max_legitimas_smote": 50000,
+    "custos": {
+        "custo_fp": 10,
+        "custo_fn": 500
+    },
+    "metas": {
+        "recall_minimo": 0.8,
+        "precision_minima": 0.6,
+        "f1_minimo": 0.85,
+        "tempo_medio_ms_maximo": 50.0,
+        "tempo_p95_ms_maximo": 100.0
+    },
+    "melhor_modelo_base": "XGBoost - scale_pos_weight",
+    "melhor_cenario_features": "sem_pos_transacao",
+    "melhor_threshold": null,
+    "criterio_selecao": "melhor compromisso entre detecção, custo e viabilidade operacional (ciclo preliminar)",
+    "conjunto_teste": {
+        "total": 89466,
+        "fraudes": 1252,
+        "legitimas": 88214
+    }
+}

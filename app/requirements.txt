@@ -1,0 +1,13 @@
+# Dependências apenas da dashboard, para o build de deploy (Streamlit Community
+# Cloud procura o arquivo de dependências junto ao entrypoint antes da raiz).
+#
+# A dashboard não treina modelos, então xgboost, lightgbm, imbalanced-learn,
+# kagglehub, matplotlib e seaborn — presentes no requirements.txt da raiz para
+# os notebooks — ficam de fora e o build fica bem mais rápido.
+#
+# Para o ambiente completo de desenvolvimento, use o requirements.txt da raiz.
+streamlit
+altair
+pandas
+numpy
+scikit-learn
